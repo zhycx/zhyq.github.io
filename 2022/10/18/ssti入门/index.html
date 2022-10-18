@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018184827820.png">
 <meta property="og:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018185833149.png">
 <meta property="article:published_time" content="2022-10-18T11:47:13.000Z">
-<meta property="article:modified_time" content="2022-10-18T12:32:51.539Z">
+<meta property="article:modified_time" content="2022-10-18T12:35:12.793Z">
 <meta property="article:author" content="ocean">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://zoceanyq.github.io/2022/10/18/ssti%E5%85%A5%E9%97%A8/image-20221018170230556.png">
@@ -365,12 +365,11 @@
 <h3 id="被过滤-1"><a href="#被过滤-1" class="headerlink" title="_被过滤"></a>_被过滤</h3><p>当_被过滤时，有以下几种方法绕过</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-number">1</span>、通过<span class="hljs-built_in">list</span>获取字符列表，然后用pop来获取_，举个例子<br>&#123;% <span class="hljs-built_in">set</span> a=(()|select|string|<span class="hljs-built_in">list</span>).pop(<span class="hljs-number">24</span>)%&#125;&#123;%<span class="hljs-built_in">print</span>(a)%&#125;<br><span class="hljs-number">2</span>、可以通过十六进制，或者Unicode编码的方式进行绕过这个方法也通常用来绕过关键字绕过，举个例子<br>&#123;&#123;()[<span class="hljs-string">&quot;\x5f\x5fclass\x5f\x5f&quot;</span>]&#125;&#125; =&#123;&#123;().__class__&#125;&#125;<br></code></pre></td></tr></table></figure>
 
-<p>绕过[]</p>
-<p>这种情况我还没遇见过，就参考的大佬的文章</p>
+<h3 id="绕过"><a href="#绕过" class="headerlink" title="绕过[]"></a>绕过[]</h3><p>这种情况我还没遇见过，就参考的大佬的文章</p>
 <p>这个时候可以使用<code>__getitem__</code> 魔术方法，它的作用简单说就是可以把中括号转换为括号的形式，举个例子</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">__bases__[<span class="hljs-number">0</span>]=__bases__.__getitem__(<span class="hljs-number">0</span>)<br></code></pre></td></tr></table></figure>
 
-<h3 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h3>
+<h3 id="绕过-1"><a href="#绕过-1" class="headerlink" title="绕过"></a>绕过</h3>
                 
               </div>
             
